@@ -6,6 +6,7 @@ A React Native Expo app for connecting to and browsing Weaviate Vector Store col
 
 - **Weaviate Connection**: Connect to any Weaviate instance with support for HTTP/HTTPS and API key authentication
 - **Collection Browser**: View available collections in your Weaviate instance
+- **Collection Management**: Delete collections directly from the UI
 - **Object Viewer**: Display objects from any collection in both table and card formats
 - **Real-time Data**: Refresh collections to see the latest data
 - **Cross-platform**: Works on iOS, Android, and web
@@ -54,6 +55,7 @@ A React Native Expo app for connecting to and browsing Weaviate Vector Store col
 1. **Enter Collection Name**: Type the name of the collection you want to explore
 2. **Browse Available Collections**: Tap the 📋 button to see a dropdown of available collections
 3. **Load Collection**: Tap "Load Collection" to fetch all objects from the specified collection
+4. **Delete Collection**: In the collections dropdown, tap the 🗑️ icon next to a collection to delete it (a confirmation dialog will appear)
 
 ### Viewing Data
 
