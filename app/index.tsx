@@ -11,10 +11,9 @@ export default function Index() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <SafeAreaView>
       <StatusBar barStyle="light-content" backgroundColor="#3b82f6" />
       <ScrollView 
-        className="flex-1"
         contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 24, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >

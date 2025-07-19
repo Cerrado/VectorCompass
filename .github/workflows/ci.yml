@@ -36,9 +36,6 @@ jobs:
       - name: Install Expo CLI
         run: npm install -g @expo/cli@latest
 
-      - name: List repo files
-        run: ls -la
-        
       - name: Expo Doctor
         run: npx expo-doctor
 
