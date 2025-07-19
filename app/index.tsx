@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StatusBar, ScrollView } from 'react-native';
-import WeaviateConnection from '../components/WeaviateConnection';
-import CollectionViewer from '../components/CollectionViewer';
+import WeaviateConnection from '../components/weaviate/WeaviateConnection';
+import CollectionViewer from '../components/collection/CollectionViewer';
 
 export default function Index() {
   const [isConnected, setIsConnected] = useState(false);

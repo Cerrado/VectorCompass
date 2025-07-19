@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from 'react-native';
-import { Overlay, Card, Title, Button, ButtonText, Row } from '../styles/components';
+import { Overlay, Card, Title, Button, ButtonText, Row } from '../../styles/components';
 
 interface CustomAlertProps {
   visible: boolean;

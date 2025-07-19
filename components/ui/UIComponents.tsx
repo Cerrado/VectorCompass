@@ -10,7 +10,7 @@ import {
   Card,
   Title,
   Subtitle
-} from '../styles/components';
+} from '../../styles/components';
 
 export interface ConnectionStatusProps {
   isConnected: boolean;
@@ -115,7 +115,7 @@ export const SectionHeader: React.FC<{
 );
 
 // Reusable Empty State Component
-export const EmptyState: React.FC<{
+export const EmptyDataState: React.FC<{
   icon?: string;
   title: string;
   subtitle?: string;
@@ -130,7 +130,7 @@ export const EmptyState: React.FC<{
 );
 
 // Reusable Loading State Component  
-export const LoadingState: React.FC<{
+export const DataLoadingState: React.FC<{
   title?: string;
   subtitle?: string;
 }> = ({ title = 'Loading...', subtitle }) => (
