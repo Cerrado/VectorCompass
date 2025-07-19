@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 interface CustomAlertProps {
   visible: boolean;
@@ -14,10 +14,6 @@ interface CustomAlertProps {
 }
 
 const CustomAlert: React.FC<CustomAlertProps> = ({ visible, title, message, buttons, onClose }) => {
-  if (Platform.OS !== 'web') {
-    return null;
-  }
-
   return (
     <Modal
       transparent={true}

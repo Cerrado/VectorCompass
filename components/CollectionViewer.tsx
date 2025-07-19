@@ -62,7 +62,9 @@ export default function CollectionViewer() {
   };
 
   useEffect(() => {
-    loadAvailableCollections().then();
+    loadAvailableCollections()
+        .then()
+        .catch(error => console.error('Failed to load collections:', error));
   }, []);
 
   const loadAvailableCollections = async () => {
@@ -276,6 +278,7 @@ export default function CollectionViewer() {
                     <TouchableOpacity
                       style={styles.deleteButton}
                       onPress={() => handleDeleteCollection(collection)}
+                      accessibilityLabel={`Delete collection ${collection}`}
                     >
                       <Text style={styles.deleteButtonText}>🗑️</Text>
                     </TouchableOpacity>
@@ -558,7 +561,6 @@ const styles = StyleSheet.create({
   deleteButton: {
     marginRight: 12,
     padding: 4,
-    zIndex: 999
   },
   deleteButtonText: {
     fontSize: 16,
