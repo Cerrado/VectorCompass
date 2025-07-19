@@ -105,6 +105,30 @@ npm run ios
 npm run android
 ```
 
+## Continuous Integration
+
+This project uses GitHub Actions for continuous integration:
+
+- **Automated Checks**: Every pull request to the main branch and every push to main triggers automated checks
+- **Validation Process**:
+  - TypeScript compilation check
+  - ESLint code quality verification
+  - Build validation using Expo prebuild
+- **Workflow File**: Located at `.github/workflows/ci.yml`
+
+To run the same checks locally:
+
+```bash
+# TypeScript check
+npx tsc --noEmit
+
+# Lint check
+npm run lint
+
+# Build validation
+npx expo prebuild --clean
+```
+
 ## Configuration
 
 The app automatically detects and connects to Weaviate instances. Supported configurations:
