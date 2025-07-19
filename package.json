@@ -47,5 +47,12 @@
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"
   },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": ["styled-components"]
+      }
+    }
+  },
   "private": true
 }
