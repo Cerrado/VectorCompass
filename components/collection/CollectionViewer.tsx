@@ -249,10 +249,6 @@ export default function CollectionViewer() {
         onRefresh={handleRefresh}
       />
 
-      {!loading && objects.length === 0 && collectionName && (
-        <EmptyState collectionName={collectionName} />
-      )}
-
       {loading && (
         <LoadingState />
       )}
@@ -267,4 +263,3 @@ export default function CollectionViewer() {
     </Container>
   );
 }
-

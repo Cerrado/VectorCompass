@@ -11,11 +11,12 @@ export default function Index() {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" backgroundColor="#3b82f6" />
       <ScrollView 
         contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 24, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
       >
         <WeaviateConnection onConnected={handleConnected} />
         {isConnected && <CollectionViewer />}

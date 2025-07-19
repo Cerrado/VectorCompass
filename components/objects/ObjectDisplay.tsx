@@ -6,6 +6,7 @@ import { WeaviateObject } from '../weaviate/WeaviateHttpClient';
 import { theme } from '../../styles/theme';
 import ObjectTable from './ObjectTable';
 import ObjectCard from './ObjectCard';
+import EmptyState from '../ui/EmptyState';
 
 interface ObjectDisplayProps {
   objects: WeaviateObject[];
@@ -53,9 +54,9 @@ const ResultsSubtitle = styled.Text`
   color: ${theme.colors.text.secondary};
 `;
 
-const DataContainer = styled.View`
+const DataContainer = styled.View<{ viewMode?: 'cards' | 'table' }>`
   flex: 1;
-  padding-horizontal: ${theme.spacing.lg}px;
+  padding-horizontal: ${({ viewMode }) => viewMode === 'table' ? '0px' : theme.spacing.lg + 'px'};
   padding-bottom: ${theme.spacing.lg}px;
 `;
 
@@ -92,7 +93,7 @@ export default function ObjectDisplay({
   onObjectPress,
   onRefresh,
 }: ObjectDisplayProps) {
-  if (objects.length === 0) {
+  if (objects.length === 0 && !collectionName) {
     return null;
   }
 
@@ -128,8 +129,10 @@ export default function ObjectDisplay({
         </ViewModeContainer>
       </ResultsHeader>
 
-      <DataContainer>
-        {viewMode === 'table' ? (
+      <DataContainer viewMode={viewMode}>
+        {objects.length === 0 ? (
+          <EmptyState collectionName={collectionName} />
+        ) : viewMode === 'table' ? (
           <ObjectTable objects={objects} onObjectPress={onObjectPress} />
         ) : (
           <ObjectsList
@@ -152,5 +155,3 @@ export default function ObjectDisplay({
     </ResultsSection>
   );
 }
-
-

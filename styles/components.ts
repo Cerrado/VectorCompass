@@ -41,6 +41,7 @@ export const Label = styled.Text`
 `;
 
 export const Input = styled.TextInput<{ hasError?: boolean }>`
+  flex: 1;
   border-width: 1px;
   border-color: ${({ hasError }) => hasError ? theme.colors.destructive : theme.colors.border};
   border-radius: ${theme.borderRadius.md}px;
