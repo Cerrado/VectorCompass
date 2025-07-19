@@ -304,7 +304,7 @@ export default function CollectionViewer() {
         </TouchableOpacity>
       </View>
 
-      {/* Rest Ihrer bestehenden UI... */}
+      {/* Rest of existing UI... */}
       {objects.length > 0 && (
         <View style={styles.resultsSection}>
           <View style={styles.resultsHeader}>
