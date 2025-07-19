@@ -6,13 +6,13 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import { weaviateHttpService, WeaviateObject } from './WeaviateHttpClient';
-import CustomAlert from './CustomAlert';
 import CollectionSelector from './CollectionSelector';
 import CollectionProperties from './CollectionProperties';
 import ObjectDisplay from './ObjectDisplay';
 import EmptyState from './EmptyState';
 import LoadingState from './LoadingState';
+import {weaviateHttpService, WeaviateObject} from "@/components/weaviate";
+import {CustomAlert} from "@/components/ui";
 
 export default function CollectionViewer() {
   const [collectionName, setCollectionName] = useState('');

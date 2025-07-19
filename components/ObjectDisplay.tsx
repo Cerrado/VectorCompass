@@ -7,9 +7,9 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
-import { WeaviateObject } from './WeaviateHttpClient';
-import ObjectTable from './ObjectTable';
 import ObjectCard from './ObjectCard';
+import {WeaviateObject} from "@/components/weaviate";
+import {ObjectTable} from "@/components/objects";
 
 interface ObjectDisplayProps {
   objects: WeaviateObject[];

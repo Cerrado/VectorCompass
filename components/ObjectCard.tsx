@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { WeaviateObject } from './WeaviateHttpClient';
+import {WeaviateObject} from "@/components/weaviate";
 
 interface ObjectCardProps {
   object: WeaviateObject;
