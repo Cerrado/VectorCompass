@@ -14,6 +14,7 @@ export const theme = {
       white: '#fff',
     },
     border: '#ced4da',
+    shade: '#d1edff',
   },
   spacing: {
     xs: 4,
@@ -40,6 +41,13 @@ export const theme = {
     medium: '500',
     semibold: '600',
     bold: 'bold',
+  },
+  lineHeight: {
+    sm: 16,
+    md: 20,
+    lg: 24,
+    xl: 28,
+    xxl: 32,
   },
   shadows: {
     small: {

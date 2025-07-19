@@ -76,7 +76,7 @@ export default function WeaviateConnection({ onConnected }: WeaviateConnectionPr
           label="Protocol"
           options={[
             { label: 'HTTPS', value: 'https', icon: '🔒' },
-            { label: 'HTTP', value: 'http', icon: '�' }
+            { label: 'HTTP', value: 'http', icon: '🔓' }
           ]}
           selectedValue={config.scheme}
           onValueChange={(value) => setConfig({ ...config, scheme: value as 'http' | 'https' })}

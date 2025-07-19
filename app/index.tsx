@@ -1,4 +1,3 @@
-import "./global.css";
 import React, { useState } from 'react';
 import { SafeAreaView, StatusBar, ScrollView } from 'react-native';
 import WeaviateConnection from '../components/WeaviateConnection';

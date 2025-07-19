@@ -29,7 +29,7 @@ export const Subtitle = styled.Text<{ size?: keyof typeof theme.fontSize }>`
   font-size: ${({ size = 'lg' }) => theme.fontSize[size]}px;
   color: ${theme.colors.text.secondary};
   text-align: center;
-  line-height: 22px;
+  line-height: ${theme.lineHeight.md}px;
 `;
 
 export const Label = styled.Text`
@@ -141,11 +141,11 @@ export const InputHint = styled.Text`
   font-size: ${theme.fontSize.sm}px;
   color: ${theme.colors.text.secondary};
   font-style: italic;
-  line-height: 16px;
+  line-height: ${theme.lineHeight.sm}px;
 `;
 
 export const ConnectedContainer = styled.View`
-  background-color: #d1edff;
+  background-color: ${theme.colors.shade};
   border-radius: ${theme.borderRadius.md}px;
   border-width: 1px;
   border-color: ${theme.colors.primary};
