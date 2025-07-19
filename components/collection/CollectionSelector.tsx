@@ -1,12 +1,11 @@
 import React from 'react';
 import {
   Text,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  ScrollView,
 } from 'react-native';
-import styled from 'styled-components/native';
+import { styled } from 'styled-components/native';
+
 import { theme } from '../../styles/theme';
 import { Button, ButtonText, Input, Label } from '../../styles/components';
 

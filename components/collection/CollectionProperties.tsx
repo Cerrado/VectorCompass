@@ -1,11 +1,9 @@
 import React, { JSX } from 'react';
 import {
-  Text,
-  TouchableOpacity,
   ActivityIndicator,
-  ScrollView,
 } from 'react-native';
-import styled from 'styled-components/native';
+import { styled } from 'styled-components/native';
+
 import { theme } from '../../styles/theme';
 import { Button, ButtonText } from '../../styles/components';
 

@@ -3,7 +3,8 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import styled from 'styled-components/native';
+import { styled } from 'styled-components/native';
+
 import { weaviateHttpService, WeaviateObject } from '../weaviate/WeaviateHttpClient';
 import { theme } from '../../styles/theme';
 import CustomAlert from '../ui/CustomAlert';

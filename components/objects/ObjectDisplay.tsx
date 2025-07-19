@@ -1,6 +1,7 @@
 import React from 'react';
 import { RefreshControl } from 'react-native';
-import styled from 'styled-components/native';
+import { styled } from 'styled-components/native';
+
 import { WeaviateObject } from '../weaviate/WeaviateHttpClient';
 import { theme } from '../../styles/theme';
 import ObjectTable from './ObjectTable';

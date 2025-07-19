@@ -1,6 +1,6 @@
 import React from 'react';
-import { Text } from 'react-native';
-import styled from 'styled-components/native';
+import { styled } from 'styled-components/native';
+
 import { WeaviateObject } from '../weaviate/WeaviateHttpClient';
 import { theme } from '../../styles/theme';
 import { Card } from '../../styles/components';

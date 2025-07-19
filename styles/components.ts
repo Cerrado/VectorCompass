@@ -1,4 +1,5 @@
-import styled from 'styled-components/native';
+import { styled } from 'styled-components/native';
+
 import { theme } from './theme';
 
 // Common styled components that can be reused across the app
