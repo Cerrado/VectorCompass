@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, StatusBar, ScrollView } from 'react-native';
+import { SafeAreaView, StatusBar, ScrollView } from 'react-native';
 import WeaviateConnection from '../components/WeaviateConnection';
 import CollectionViewer from '../components/CollectionViewer';
 
@@ -11,11 +11,10 @@ export default function Index() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
+    <SafeAreaView>
+      <StatusBar barStyle="light-content" backgroundColor="#3b82f6" />
       <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 24, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
         <WeaviateConnection onConnected={handleConnected} />
@@ -24,18 +23,3 @@ export default function Index() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 40,
-  },
-});

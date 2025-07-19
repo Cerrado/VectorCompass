@@ -1,5 +1,6 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Modal } from 'react-native';
+import { Overlay, Card, Title, Button, ButtonText, Row } from '../styles/components';
 
 interface CustomAlertProps {
   visible: boolean;
@@ -21,97 +22,45 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ visible, title, message, butt
       onRequestClose={onClose}
       animationType="fade"
     >
-      <View style={alertStyles.overlay}>
-        <View style={alertStyles.container}>
-          <Text style={alertStyles.title}>{title}</Text>
-          <Text style={alertStyles.message}>{message}</Text>
+      <Overlay>
+        <Card style={{ minWidth: 300, maxWidth: 400, margin: 20 }}>
+          <Title>{title}</Title>
+          <Title size="lg" style={{ fontWeight: 'normal', marginBottom: 20, lineHeight: 22 }}>
+            {message}
+          </Title>
           
-          <View style={alertStyles.buttonContainer}>
+          <Row gap="lg" style={{ justifyContent: 'space-around' }}>
             {buttons?.map((button, index) => (
-              <TouchableOpacity
+              <Button
                 key={index}
-                style={[
-                  alertStyles.button,
-                  button.style === 'destructive' && alertStyles.destructiveButton,
-                  button.style === 'cancel' && alertStyles.cancelButton
-                ]}
+                variant={
+                  button.style === 'destructive' ? 'destructive' :
+                  button.style === 'cancel' ? 'secondary' : 'primary'
+                }
                 onPress={() => {
                   button.onPress?.();
                   onClose();
                 }}
               >
-                <Text style={[
-                  alertStyles.buttonText,
-                  button.style === 'destructive' && alertStyles.destructiveButtonText
-                ]}>
+                <ButtonText 
+                  variant={
+                    button.style === 'destructive' ? 'destructive' :
+                    button.style === 'cancel' ? 'secondary' : 'primary'
+                  }
+                >
                   {button.text}
-                </Text>
-              </TouchableOpacity>
+                </ButtonText>
+              </Button>
             )) || (
-              <TouchableOpacity style={alertStyles.button} onPress={onClose}>
-                <Text style={alertStyles.buttonText}>OK</Text>
-              </TouchableOpacity>
+              <Button onPress={onClose}>
+                <ButtonText>OK</ButtonText>
+              </Button>
             )}
-          </View>
-        </View>
-      </View>
+          </Row>
+        </Card>
+      </Overlay>
     </Modal>
   );
 };
-
-const alertStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  container: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    minWidth: 300,
-    maxWidth: 400,
-    margin: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  message: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    minWidth: 80,
-  },
-  cancelButton: {
-    backgroundColor: '#8E8E93',
-  },
-  destructiveButton: {
-    backgroundColor: '#FF3B30',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  destructiveButtonText: {
-    color: '#fff',
-  },
-});
 
 export default CustomAlert;
