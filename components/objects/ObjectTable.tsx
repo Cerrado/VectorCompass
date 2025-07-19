@@ -1,24 +1,101 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import styled from 'styled-components/native';
 import { WeaviateObject } from '../weaviate/WeaviateHttpClient';
+import { theme } from '../../styles/theme';
 
 interface ObjectTableProps {
   objects: WeaviateObject[];
   onObjectPress?: (object: WeaviateObject) => void;
 }
 
+// Styled Components
+const Container = styled.View`
+  flex: 1;
+`;
+
+const EmptyContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: ${theme.spacing.xxl}px;
+`;
+
+const EmptyText = styled.Text`
+  font-size: ${theme.fontSize.lg}px;
+  color: ${theme.colors.text.secondary};
+  text-align: center;
+`;
+
+const TableHeader = styled.View`
+  margin-bottom: ${theme.spacing.lg}px;
+`;
+
+const TableTitle = styled.Text`
+  font-size: ${theme.fontSize.xl}px;
+  font-weight: ${theme.fontWeight.semibold};
+  color: ${theme.colors.text.primary};
+  margin-bottom: 4px;
+`;
+
+const TableSubtitle = styled.Text`
+  font-size: ${theme.fontSize.sm}px;
+  color: ${theme.colors.text.secondary};
+`;
+
+const HorizontalScroll = styled.ScrollView`
+  flex: 1;
+`;
+
+const Table = styled.View`
+  min-width: 100%;
+`;
+
+const TableBody = styled.ScrollView`
+  flex: 1;
+  max-height: 400px;
+`;
+
+const Row = styled.View<{ isHeader?: boolean; isEven?: boolean }>`
+  flex-direction: row;
+  border-bottom-width: 1px;
+  border-bottom-color: #e9ecef;
+  min-height: 56px;
+  background-color: ${({ isHeader, isEven }) => 
+    isHeader ? 'transparent' : 
+    isEven ? '#f8f9fa' : theme.colors.background
+  };
+`;
+
+const Cell = styled.View<{ isHeader?: boolean }>`
+  width: 140px;
+  padding: ${theme.spacing.md}px;
+  border-right-width: 1px;
+  border-right-color: ${({ isHeader }) => isHeader ? '#495057' : '#dee2e6'};
+  justify-content: center;
+  background-color: ${({ isHeader }) => isHeader ? '#343a40' : 'transparent'};
+`;
+
+const CellText = styled.Text<{ isHeader?: boolean }>`
+  font-size: ${({ isHeader }) => isHeader ? theme.fontSize.md : theme.fontSize.sm}px;
+  font-weight: ${({ isHeader }) => isHeader ? theme.fontWeight.bold : theme.fontWeight.normal};
+  color: ${({ isHeader }) => isHeader ? theme.colors.text.white : '#495057'};
+  text-align: ${({ isHeader }) => isHeader ? 'center' : 'left'};
+  line-height: 18px;
+`;
+
+const ObjectRow = styled.TouchableOpacity<{ isEven?: boolean }>`
+  flex-direction: row;
+  border-bottom-width: 1px;
+  border-bottom-color: #f0f0f0;
+  background-color: ${({ isEven }) => isEven ? theme.colors.background : '#fafafa'};
+`;
+
 export default function ObjectTable({ objects, onObjectPress }: ObjectTableProps) {
   if (objects.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No objects to display</Text>
-      </View>
+      <EmptyContainer>
+        <EmptyText>No objects to display</EmptyText>
+      </EmptyContainer>
     );
   }
 
@@ -30,9 +107,6 @@ export default function ObjectTable({ objects, onObjectPress }: ObjectTableProps
   ).sort();
 
   const renderCell = (content: any, isHeader = false) => {
-    const cellStyle = isHeader ? styles.headerCell : styles.cell;
-    const textStyle = isHeader ? styles.headerText : styles.cellText;
-    
     let displayContent = content;
     if (!isHeader) {
       if (content === null || content === undefined) {
@@ -45,135 +119,55 @@ export default function ObjectTable({ objects, onObjectPress }: ObjectTableProps
     }
 
     return (
-      <View style={cellStyle}>
-        <Text style={textStyle} numberOfLines={isHeader ? 1 : 2}>
+      <Cell isHeader={isHeader}>
+        <CellText isHeader={isHeader} numberOfLines={isHeader ? 1 : 2}>
           {displayContent}
-        </Text>
-      </View>
+        </CellText>
+      </Cell>
     );
   };
 
   const renderHeaderRow = () => (
-    <View style={styles.row}>
+    <Row isHeader>
       {renderCell('ID', true)}
       {renderCell('Class', true)}
       {allPropertyKeys.map(key => renderCell(key, true))}
       {renderCell('Vector', true)}
-    </View>
+    </Row>
   );
 
   const renderObjectRow = (object: WeaviateObject, index: number) => (
-    <TouchableOpacity
+    <ObjectRow
       key={object.id}
-      style={[styles.row, index % 2 === 0 ? styles.evenRow : styles.oddRow]}
+      isEven={index % 2 === 0}
       onPress={() => onObjectPress && onObjectPress(object)}
     >
       {renderCell(object.id.substring(0, 8) + '...')}
       {renderCell(object.class)}
       {allPropertyKeys.map(key => renderCell(object.properties[key]))}
       {renderCell(object.vector ? `[${object.vector.length}D]` : '-')}
-    </TouchableOpacity>
+    </ObjectRow>
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.tableHeader}>
-        <Text style={styles.tableTitle}>Data Table</Text>
-        <Text style={styles.tableSubtitle}>
+    <Container>
+      <TableHeader>
+        <TableTitle>Data Table</TableTitle>
+        <TableSubtitle>
           Showing {objects.length} object{objects.length !== 1 ? 's' : ''} • Scroll horizontally to view all columns
-        </Text>
-      </View>
+        </TableSubtitle>
+      </TableHeader>
       
-      <ScrollView horizontal showsHorizontalScrollIndicator={true} style={styles.horizontalScroll}>
-        <View style={styles.table}>
+      <HorizontalScroll horizontal showsHorizontalScrollIndicator={true}>
+        <Table>
           {renderHeaderRow()}
-          <ScrollView style={styles.tableBody} nestedScrollEnabled={true}>
+          <TableBody nestedScrollEnabled={true}>
             {objects.map((object, index) => renderObjectRow(object, index))}
-          </ScrollView>
-        </View>
-      </ScrollView>
-    </View>
+          </TableBody>
+        </Table>
+      </HorizontalScroll>
+    </Container>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  tableHeader: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    backgroundColor: '#f8f9fa',
-  },
-  tableTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#212529',
-    marginBottom: 4,
-  },
-  tableSubtitle: {
-    fontSize: 14,
-    color: '#6c757d',
-  },
-  horizontalScroll: {
-    flex: 1,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#6c757d',
-    textAlign: 'center',
-  },
-  table: {
-    minWidth: '100%',
-  },
-  tableBody: {
-    maxHeight: 400,
-  },
-  row: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-    minHeight: 56,
-  },
-  evenRow: {
-    backgroundColor: '#f8f9fa',
-  },
-  oddRow: {
-    backgroundColor: '#fff',
-  },
-  headerCell: {
-    width: 140,
-    padding: 12,
-    backgroundColor: '#343a40',
-    borderRightWidth: 1,
-    borderRightColor: '#495057',
-    justifyContent: 'center',
-  },
-  cell: {
-    width: 140,
-    padding: 12,
-    borderRightWidth: 1,
-    borderRightColor: '#dee2e6',
-    justifyContent: 'center',
-  },
-  headerText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  cellText: {
-    color: '#495057',
-    fontSize: 13,
-    textAlign: 'left',
-    lineHeight: 18,
-  },
-});
+

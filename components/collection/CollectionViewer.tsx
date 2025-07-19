@@ -1,18 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View,
   Text,
-  StyleSheet,
   Alert,
   Platform,
 } from 'react-native';
+import styled from 'styled-components/native';
 import { weaviateHttpService, WeaviateObject } from '../weaviate/WeaviateHttpClient';
+import { theme } from '../../styles/theme';
 import CustomAlert from '../ui/CustomAlert';
 import CollectionSelector from './CollectionSelector';
 import CollectionProperties from './CollectionProperties';
 import ObjectDisplay from '../objects/ObjectDisplay';
 import EmptyState from '../ui/EmptyState';
 import LoadingState from '../ui/LoadingState';
+
+// Styled Components
+const Container = styled.View`
+  flex: 1;
+  padding: ${theme.spacing.xl}px;
+  background-color: ${theme.colors.surface};
+`;
+
+const Header = styled.View`
+  margin-bottom: ${theme.spacing.xxl}px;
+  align-items: center;
+`;
+
+const Title = styled.Text`
+  font-size: ${theme.fontSize.xxl}px;
+  font-weight: ${theme.fontWeight.bold};
+  color: ${theme.colors.text.primary};
+  text-align: center;
+  margin-bottom: ${theme.spacing.sm}px;
+`;
+
+const Subtitle = styled.Text`
+  font-size: ${theme.fontSize.lg}px;
+  color: ${theme.colors.text.secondary};
+  text-align: center;
+  line-height: ${theme.lineHeight.md}px;
+`;
 
 export default function CollectionViewer() {
   const [collectionName, setCollectionName] = useState('');
@@ -186,11 +213,11 @@ export default function CollectionViewer() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Collection Viewer</Text>
-        <Text style={styles.subtitle}>Browse objects in your Weaviate collections</Text>
-      </View>
+    <Container>
+      <Header>
+        <Title>Collection Viewer</Title>
+        <Subtitle>Browse objects in your Weaviate collections</Subtitle>
+      </Header>
 
       <CollectionSelector
         collectionName={collectionName}
@@ -237,31 +264,7 @@ export default function CollectionViewer() {
         buttons={alertConfig.buttons}
         onClose={closeAlert}
       />
-    </View>
+    </Container>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f8f9fa',
-  },
-  header: {
-    marginBottom: 24,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    textAlign: 'center',
-    color: '#212529',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6c757d',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-});

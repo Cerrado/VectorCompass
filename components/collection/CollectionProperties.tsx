@@ -1,12 +1,13 @@
 import React, { JSX } from 'react';
 import {
-  View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import styled from 'styled-components/native';
+import { theme } from '../../styles/theme';
+import { Button, ButtonText } from '../../styles/components';
 
 interface CollectionPropertiesProps {
   show: boolean;
@@ -15,6 +16,176 @@ interface CollectionPropertiesProps {
   loadingSchema: boolean;
   onClose: () => void;
 }
+
+// Styled Components
+const PropertiesSection = styled.View`
+  margin-bottom: ${theme.spacing.xl}px;
+  background-color: ${theme.colors.background};
+  border-radius: ${theme.borderRadius.lg}px;
+  ${theme.shadows.small};
+`;
+
+const PropertiesSectionHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: ${theme.spacing.lg}px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${theme.colors.border};
+  background-color: ${theme.colors.surface};
+  border-top-left-radius: ${theme.borderRadius.lg}px;
+  border-top-right-radius: ${theme.borderRadius.lg}px;
+`;
+
+const PropertiesTitle = styled.Text`
+  font-size: ${theme.fontSize.xl}px;
+  font-weight: ${theme.fontWeight.semibold};
+  color: ${theme.colors.text.primary};
+`;
+
+const SchemaLoadingState = styled.View`
+  padding: ${theme.spacing.xxl}px;
+  align-items: center;
+`;
+
+const LoadingText = styled.Text`
+  margin-top: ${theme.spacing.md}px;
+  font-size: ${theme.fontSize.lg}px;
+  color: ${theme.colors.text.secondary};
+`;
+
+const SchemaContainer = styled.ScrollView`
+  max-height: 400px;
+  padding: ${theme.spacing.lg}px;
+`;
+
+const PropertiesList = styled.View`
+  margin-bottom: ${theme.spacing.lg}px;
+`;
+
+const PropertyItem = styled.View<{ level?: number }>`
+  background-color: ${theme.colors.surface};
+  border-radius: ${theme.borderRadius.md}px;
+  padding: ${theme.spacing.md}px;
+  border-left-width: 3px;
+  border-left-color: ${theme.colors.primary};
+  margin-bottom: ${theme.spacing.md}px;
+  margin-left: ${({ level = 0 }) => level * 20}px;
+`;
+
+const PropertyHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+`;
+
+const PropertyName = styled.Text`
+  font-size: ${theme.fontSize.lg}px;
+  font-weight: ${theme.fontWeight.medium};
+  color: ${theme.colors.text.primary};
+`;
+
+const PropertyType = styled.View<{ dataType: string }>`
+  background-color: ${({ dataType }) => {
+    switch (dataType) {
+      case 'text': return '#e3f2fd';
+      case 'int': return '#f3e5f5';
+      case 'number': return '#e8f5e8';
+      case 'boolean': return '#fff3e0';
+      case 'object': return '#fce4ec';
+      default: return theme.colors.surface;
+    }
+  }};
+  padding: 4px 8px;
+  border-radius: ${theme.borderRadius.sm}px;
+`;
+
+const PropertyTypeText = styled.Text<{ dataType: string }>`
+  font-size: ${theme.fontSize.sm}px;
+  font-weight: ${theme.fontWeight.medium};
+  color: ${({ dataType }) => {
+    switch (dataType) {
+      case 'text': return '#1976d2';
+      case 'int': return '#7b1fa2';
+      case 'number': return '#388e3c';
+      case 'boolean': return '#f57c00';
+      case 'object': return '#c2185b';
+      default: return theme.colors.text.secondary;
+    }
+  }};
+`;
+
+const PropertyDetails = styled.View`
+  margin-left: ${theme.spacing.lg}px;
+`;
+
+const PropertyDescription = styled.Text`
+  font-size: ${theme.fontSize.sm}px;
+  color: ${theme.colors.text.secondary};
+  margin-bottom: 4px;
+`;
+
+const NestedPropertiesContainer = styled.View`
+  margin-top: ${theme.spacing.md}px;
+  padding-top: ${theme.spacing.md}px;
+  border-top-width: 1px;
+  border-top-color: #e9ecef;
+  background-color: ${theme.colors.surface};
+  border-radius: 6px;
+  padding: ${theme.spacing.sm}px;
+`;
+
+const VectorizerInfo = styled.View`
+  margin-top: ${theme.spacing.lg}px;
+  padding: ${theme.spacing.md}px;
+  background-color: #e7f3ff;
+  border-radius: ${theme.borderRadius.md}px;
+  border-left-width: 3px;
+  border-left-color: ${theme.colors.primary};
+`;
+
+const VectorizerTitle = styled.Text`
+  font-size: ${theme.fontSize.lg}px;
+  font-weight: ${theme.fontWeight.semibold};
+  color: ${theme.colors.text.primary};
+  margin-bottom: 4px;
+`;
+
+const VectorizerDetails = styled.Text`
+  font-size: ${theme.fontSize.sm}px;
+  color: ${theme.colors.text.secondary};
+`;
+
+const NestedPropertiesTitle = styled.Text`
+  font-size: ${theme.fontSize.md}px;
+  font-weight: ${theme.fontWeight.medium};
+  color: ${theme.colors.text.primary};
+  margin-bottom: ${theme.spacing.sm}px;
+`;
+
+const PropertyDetail = styled.Text`
+  font-size: ${theme.fontSize.sm}px;
+  color: ${theme.colors.text.secondary};
+`;
+
+const NoPropertiesText = styled.Text`
+  font-size: ${theme.fontSize.sm}px;
+  color: ${theme.colors.text.secondary};
+  font-style: italic;
+`;
+
+const SchemaTitle = styled.Text`
+  font-size: ${theme.fontSize.xl}px;
+  font-weight: ${theme.fontWeight.semibold};
+  color: ${theme.colors.text.primary};
+  margin-bottom: ${theme.spacing.lg}px;
+`;
+
+const SchemaErrorText = styled.Text`
+  font-size: ${theme.fontSize.lg}px;
+  color: ${theme.colors.destructive};
+`;
 
 export default function CollectionProperties({
   show,
@@ -27,59 +198,52 @@ export default function CollectionProperties({
     return properties.map((property: any, index: number) => {
       const dataType = property.dataType?.[0] || 'unknown';
       const isObjectType = dataType === 'object' || dataType === 'object[]';
-      const indentStyle = level > 0 ? { marginLeft: level * 20 } : {};
 
       return (
-        <View key={`${level}-${index}`} style={[styles.propertyItem, indentStyle]}>
-          <View style={styles.propertyHeader}>
-            <Text style={styles.propertyName}>
+        <PropertyItem key={`${level}-${index}`} level={level}>
+          <PropertyHeader>
+            <PropertyName>
               {level > 0 && '└─ '}{property.name}
-            </Text>
-            <View style={[
-              styles.propertyTypeBadge,
-              isObjectType && styles.objectTypeBadge
-            ]}>
-              <Text style={[
-                styles.propertyTypeText,
-                isObjectType && styles.objectTypeText
-              ]}>
+            </PropertyName>
+            <PropertyType dataType={dataType}>
+              <PropertyTypeText dataType={dataType}>
                 {dataType}
-              </Text>
-            </View>
-          </View>
+              </PropertyTypeText>
+            </PropertyType>
+          </PropertyHeader>
 
           {property.description && (
-            <Text style={styles.propertyDescription}>{property.description}</Text>
+            <PropertyDescription>{property.description}</PropertyDescription>
           )}
 
-          <View style={styles.propertyDetails}>
+          <PropertyDetails>
             {property.tokenization && (
-              <Text style={styles.propertyDetail}>Tokenization: {property.tokenization}</Text>
+              <PropertyDetail>Tokenization: {property.tokenization}</PropertyDetail>
             )}
             {property.indexFilterable !== undefined && (
-              <Text style={styles.propertyDetail}>
+              <PropertyDetail>
                 Filterable: {property.indexFilterable ? 'Yes' : 'No'}
-              </Text>
+              </PropertyDetail>
             )}
             {property.indexSearchable !== undefined && (
-              <Text style={styles.propertyDetail}>
+              <PropertyDetail>
                 Searchable: {property.indexSearchable ? 'Yes' : 'No'}
-              </Text>
+              </PropertyDetail>
             )}
-          </View>
+          </PropertyDetails>
 
           {isObjectType && (property.nestedProperties || property.properties) && (
-            <View style={styles.nestedPropertiesContainer}>
-              <Text style={styles.nestedPropertiesTitle}>Nested Properties:</Text>
+            <NestedPropertiesContainer>
+              <NestedPropertiesTitle>Nested Properties:</NestedPropertiesTitle>
               {property.nestedProperties && property.nestedProperties.length > 0 
                 ? renderNestedProperties(property.nestedProperties, level + 1)
                 : property.properties && property.properties.length > 0
                 ? renderNestedProperties(property.properties, level + 1)
-                : <Text style={styles.noPropertiesText}>No nested properties defined</Text>
+                : <NoPropertiesText>No nested properties defined</NoPropertiesText>
               }
-            </View>
+            </NestedPropertiesContainer>
           )}
-        </View>
+        </PropertyItem>
       );
     });
   };
@@ -89,227 +253,51 @@ export default function CollectionProperties({
   }
 
   return (
-    <View style={styles.propertiesSection}>
-      <View style={styles.propertiesSectionHeader}>
-        <Text style={styles.propertiesSectionTitle}>
+    <PropertiesSection>
+      <PropertiesSectionHeader>
+        <PropertiesTitle>
           Collection Properties: &quot;{collectionName}&quot;
-        </Text>
-        <TouchableOpacity
-          style={styles.togglePropertiesButton}
+        </PropertiesTitle>
+        <Button
+          variant="secondary"
+          size="sm"
           onPress={onClose}
         >
-          <Text style={styles.togglePropertiesButtonText}>✕</Text>
-        </TouchableOpacity>
-      </View>
+          <ButtonText variant="secondary" size="sm">✕</ButtonText>
+        </Button>
+      </PropertiesSectionHeader>
 
       {loadingSchema ? (
-        <View style={styles.schemaLoadingState}>
-          <ActivityIndicator size="small" color="#007AFF" />
-          <Text style={styles.schemaLoadingText}>Loading schema...</Text>
-        </View>
+        <SchemaLoadingState>
+          <ActivityIndicator size="small" color={theme.colors.primary} />
+          <LoadingText>Loading schema...</LoadingText>
+        </SchemaLoadingState>
       ) : collectionSchema ? (
-        <ScrollView style={styles.propertiesScrollView} showsVerticalScrollIndicator={true}>
-          <View style={styles.schemaContainer}>
-            <Text style={styles.schemaTitle}>Schema Information</Text>
+        <SchemaContainer showsVerticalScrollIndicator={true}>
+          <SchemaTitle>Schema Information</SchemaTitle>
 
-            {collectionSchema.properties && collectionSchema.properties.length > 0 ? (
-              <View style={styles.propertiesList}>
-                {renderNestedProperties(collectionSchema.properties)}
-              </View>
-            ) : (
-              <Text style={styles.noPropertiesText}>No properties found in schema</Text>
-            )}
+          {collectionSchema.properties && collectionSchema.properties.length > 0 ? (
+            <PropertiesList>
+              {renderNestedProperties(collectionSchema.properties)}
+            </PropertiesList>
+          ) : (
+            <NoPropertiesText>No properties found in schema</NoPropertiesText>
+          )}
 
-            {collectionSchema.vectorizer && (
-              <View style={styles.vectorizerInfo}>
-                <Text style={styles.vectorizerTitle}>Vectorizer</Text>
-                <Text style={styles.vectorizerText}>{collectionSchema.vectorizer}</Text>
-              </View>
-            )}
-          </View>
-        </ScrollView>
+          {collectionSchema.vectorizer && (
+            <VectorizerInfo>
+              <VectorizerTitle>Vectorizer</VectorizerTitle>
+              <VectorizerDetails>{collectionSchema.vectorizer}</VectorizerDetails>
+            </VectorizerInfo>
+          )}
+        </SchemaContainer>
       ) : (
-        <View style={styles.schemaErrorState}>
-          <Text style={styles.schemaErrorText}>Failed to load schema</Text>
-        </View>
+        <SchemaLoadingState>
+          <SchemaErrorText>Failed to load schema</SchemaErrorText>
+        </SchemaLoadingState>
       )}
-    </View>
+    </PropertiesSection>
   );
 }
 
-const styles = StyleSheet.create({
-  propertiesSection: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  propertiesSectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    backgroundColor: '#f8f9fa',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  propertiesSectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#212529',
-    flex: 1,
-  },
-  togglePropertiesButton: {
-    backgroundColor: '#e9ecef',
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  togglePropertiesButtonText: {
-    fontSize: 16,
-    color: '#6c757d',
-    fontWeight: 'bold',
-  },
-  propertiesScrollView: {
-    maxHeight: 400,
-  },
-  schemaContainer: {
-    padding: 16,
-  },
-  schemaTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#495057',
-    marginBottom: 12,
-  },
-  propertiesList: {
-    gap: 12,
-  },
-  propertyItem: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    padding: 12,
-    borderLeftWidth: 3,
-    borderLeftColor: '#007AFF',
-  },
-  propertyHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  propertyName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#212529',
-    flex: 1,
-  },
-  propertyTypeBadge: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  objectTypeBadge: {
-    backgroundColor: '#28a745',
-  },
-  propertyTypeText: {
-    fontSize: 12,
-    color: '#fff',
-    fontWeight: '500',
-    textTransform: 'uppercase',
-  },
-  objectTypeText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  propertyDescription: {
-    fontSize: 14,
-    color: '#6c757d',
-    marginBottom: 8,
-    lineHeight: 20,
-  },
-  propertyDetails: {
-    gap: 4,
-  },
-  propertyDetail: {
-    fontSize: 12,
-    color: '#495057',
-    backgroundColor: '#e9ecef',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-    alignSelf: 'flex-start',
-  },
-  noPropertiesText: {
-    fontSize: 14,
-    color: '#6c757d',
-    fontStyle: 'italic',
-    textAlign: 'center',
-    padding: 20,
-  },
-  vectorizerInfo: {
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: '#e7f3ff',
-    borderRadius: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: '#007AFF',
-  },
-  vectorizerTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#495057',
-    marginBottom: 4,
-  },
-  vectorizerText: {
-    fontSize: 14,
-    color: '#6c757d',
-  },
-  schemaLoadingState: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    gap: 8,
-  },
-  schemaLoadingText: {
-    fontSize: 14,
-    color: '#6c757d',
-  },
-  schemaErrorState: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  schemaErrorText: {
-    fontSize: 14,
-    color: '#dc3545',
-    textAlign: 'center',
-  },
-  nestedPropertiesContainer: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
-    backgroundColor: '#f8f9fa',
-    borderRadius: 6,
-    padding: 8,
-  },
-  nestedPropertiesTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#495057',
-    marginBottom: 8,
-  },
-});
+
