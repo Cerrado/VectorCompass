@@ -65,9 +65,7 @@ export default function CollectionViewer() {
   };
 
   useEffect(() => {
-    loadAvailableCollections()
-        .then()
-        .catch(error => console.error('Failed to load collections:', error));
+    loadAvailableCollections().then().catch(error => console.error('Failed to load collections:', error));
   }, []);
 
   const loadAvailableCollections = async () => {
@@ -143,9 +141,7 @@ export default function CollectionViewer() {
     setCollectionName(collection);
     setShowCollections(false);
     setShowProperties(true);
-    loadCollectionSchema(collection)
-        .then()
-        .catch(error => console.error('Failed to load schema:', error));
+    loadCollectionSchema(collection).then().catch(error => console.error('Failed to load schema:', error));
   };
 
   const handleDeleteCollection = async (collection: string) => {
