@@ -11,7 +11,7 @@ import {
   Button,
   ButtonText,
   LoadingContainer
-} from '../styles/components';
+} from '../../styles/components';
 import { ActivityIndicator } from 'react-native';
 
 export interface FormFieldProps {

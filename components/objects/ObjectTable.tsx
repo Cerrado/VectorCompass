@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { WeaviateObject } from './WeaviateHttpClient';
+import { WeaviateObject } from '../weaviate/WeaviateHttpClient';
 
 interface ObjectTableProps {
   objects: WeaviateObject[];

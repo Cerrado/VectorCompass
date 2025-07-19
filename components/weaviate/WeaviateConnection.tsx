@@ -5,9 +5,9 @@ import {
   Title, 
   Subtitle, 
   HeaderContainer
-} from '../styles/components';
-import { Form, FormField, ToggleField, SubmitButton } from './Form';
-import { ConnectionStatus } from './UIComponents';
+} from '../../styles/components';
+import { Form, FormField, ToggleField, SubmitButton } from '../forms/Form';
+import { ConnectionStatus } from '../ui/UIComponents';
 import { weaviateHttpService, WeaviateConfig } from './WeaviateHttpClient';
 
 interface WeaviateConnectionProps {
