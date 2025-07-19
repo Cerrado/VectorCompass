@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  RefreshControl,
-} from 'react-native';
+import { RefreshControl } from 'react-native';
 import styled from 'styled-components/native';
 import { WeaviateObject } from '../weaviate/WeaviateHttpClient';
 import { theme } from '../../styles/theme';
