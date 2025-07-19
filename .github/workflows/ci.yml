@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Cache dependencies and Expo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ~/.cache/expo
+          key: ${{ runner.os }}-expo-deps-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-expo-deps-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Expo CLI
+        run: npm install -g @expo/cli@latest
+
+      - name: Expo Doctor
+        run: npx expo-doctor
+
+      - name: TypeScript Check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Security Audit
+        run: npm audit --audit-level moderate
+
+      - name: Validate build
+        run: npx expo prebuild --clean --platform all
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            **/npm-debug.log
+            **/yarn-debug.log
+            **/yarn-error.log
+          retention-days: 7

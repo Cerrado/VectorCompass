@@ -9,9 +9,11 @@ import {
   ActivityIndicator,
   ScrollView,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import { weaviateHttpService, WeaviateObject } from './WeaviateHttpClient';
 import ObjectTable from './ObjectTable';
+import CustomAlert from './CustomAlert';
 
 export default function CollectionViewer() {
   const [collectionName, setCollectionName] = useState('');
@@ -22,8 +24,47 @@ export default function CollectionViewer() {
   const [showCollections, setShowCollections] = useState(false);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
 
+  const [alertConfig, setAlertConfig] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    buttons?: {
+      text: string;
+      onPress?: () => void;
+      style?: 'default' | 'cancel' | 'destructive';
+    }[];
+  }>({
+    visible: false,
+    title: '',
+    message: '',
+    buttons: [],
+  });
+
+  const showAlert = (
+    title: string, 
+    message: string, 
+    buttons?: {text: string, onPress?: () => void, style?: 'default' | 'cancel' | 'destructive'}[]
+  ) => {
+    if (Platform.OS === 'web') {
+      setAlertConfig({
+        visible: true,
+        title,
+        message,
+        buttons: buttons || [{ text: 'OK' }],
+      });
+    } else {
+      Alert.alert(title, message, buttons);
+    }
+  };
+
+  const closeAlert = () => {
+    setAlertConfig(prev => ({ ...prev, visible: false }));
+  };
+
   useEffect(() => {
-    loadAvailableCollections();
+    loadAvailableCollections()
+        .then()
+        .catch(error => console.error('Failed to load collections:', error));
   }, []);
 
   const loadAvailableCollections = async () => {
@@ -39,12 +80,12 @@ export default function CollectionViewer() {
 
   const handleLoadCollection = async () => {
     if (!collectionName.trim()) {
-      Alert.alert('Error', 'Please enter a collection name');
+      showAlert('Error', 'Please enter a collection name');
       return;
     }
 
     if (!weaviateHttpService.isClientConnected()) {
-      Alert.alert('Error', 'Not connected to Weaviate');
+      showAlert('Error', 'Not connected to Weaviate');
       return;
     }
 
@@ -52,12 +93,12 @@ export default function CollectionViewer() {
     try {
       const collectionObjects = await weaviateHttpService.getObjectsFromCollection(collectionName);
       setObjects(collectionObjects);
-      
+
       if (collectionObjects.length === 0) {
-        Alert.alert('Info', `Collection "${collectionName}" is empty or doesn't exist`);
+        showAlert('Info', `Collection "${collectionName}" is empty or doesn't exist`);
       }
     } catch (error) {
-      Alert.alert('Error', `Failed to load collection: ${error}`);
+      showAlert('Error', `Failed to load collection: ${error}`);
       setObjects([]);
     } finally {
       setLoading(false);
@@ -66,13 +107,13 @@ export default function CollectionViewer() {
 
   const handleRefresh = async () => {
     if (!collectionName.trim()) return;
-    
+
     setRefreshing(true);
     try {
       const collectionObjects = await weaviateHttpService.getObjectsFromCollection(collectionName);
       setObjects(collectionObjects);
     } catch (error) {
-      Alert.alert('Error', `Failed to refresh collection: ${error}`);
+      showAlert('Error', `Failed to refresh collection: ${error}`);
     } finally {
       setRefreshing(false);
     }
@@ -83,8 +124,42 @@ export default function CollectionViewer() {
     setShowCollections(false);
   };
 
+  const handleDeleteCollection = async (collection: string) => {
+    showAlert(
+      'Delete Collection',
+      `Are you sure you want to delete the collection "${collection}"? This action cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            setLoading(true);
+            try {
+              const success = await weaviateHttpService.deleteCollection(collection);
+              if (success) {
+                showAlert('Success', `Collection "${collection}" has been deleted.`);
+                // Refresh the collections list
+                await loadAvailableCollections();
+                // Clear the current collection if it was the one deleted
+                if (collectionName === collection) {
+                  setCollectionName('');
+                  setObjects([]);
+                }
+              }
+            } catch (error) {
+              showAlert('Error', `Failed to delete collection: ${error}`);
+            } finally {
+              setLoading(false);
+            }
+          }
+        }
+      ]
+    );
+  };
+
   const handleObjectPress = (object: WeaviateObject) => {
-    Alert.alert(
+    showAlert(
       'Object Details',
       `ID: ${object.id}\nClass: ${object.class}\nProperties: ${Object.keys(object.properties).length}`,
       [{ text: 'OK' }]
@@ -99,14 +174,14 @@ export default function CollectionViewer() {
 
   const renderObjectCard = (object: WeaviateObject, index: number) => {
     const propertyKeys = Object.keys(object.properties);
-    
+
     return (
       <View key={object.id} style={styles.objectCard}>
         <View style={styles.objectHeader}>
           <Text style={styles.objectId}>ID: {object.id}</Text>
           <Text style={styles.objectClass}>Class: {object.class}</Text>
         </View>
-        
+
         <View style={styles.propertiesContainer}>
           <Text style={styles.propertiesTitle}>Properties:</Text>
           {propertyKeys.length > 0 ? (
@@ -142,7 +217,7 @@ export default function CollectionViewer() {
         <Text style={styles.title}>Collection Viewer</Text>
         <Text style={styles.subtitle}>Browse objects in your Weaviate collections</Text>
       </View>
-      
+
       <View style={styles.inputSection}>
         <Text style={styles.inputLabel}>Collection Name</Text>
         <View style={styles.inputContainer}>
@@ -181,24 +256,39 @@ export default function CollectionViewer() {
               nestedScrollEnabled={true}
             >
               {availableCollections.map((collection, index) => (
-                <TouchableOpacity
+                <View
                   key={collection}
                   style={[
                     styles.collectionOption,
                     index === availableCollections.length - 1 && styles.lastCollectionOption
                   ]}
-                  onPress={() => selectCollection(collection)}
                 >
-                  <View style={styles.collectionOptionContent}>
+                  <TouchableOpacity
+                    style={styles.collectionOptionContent}
+                    onPress={() => selectCollection(collection)}
+                  >
                     <Text style={styles.collectionOptionText} numberOfLines={1}>
                       {collection}
                     </Text>
                     <View style={styles.collectionBadge}>
                       <Text style={styles.collectionBadgeText}>Collection</Text>
                     </View>
+                  </TouchableOpacity>
+                  <View style={styles.collectionActions}>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => handleDeleteCollection(collection)}
+                      accessibilityLabel={`Delete collection ${collection}`}
+                    >
+                      <Text style={styles.deleteButtonText}>🗑️</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => selectCollection(collection)}
+                    >
+                      <Text style={styles.selectIcon}>→</Text>
+                    </TouchableOpacity>
                   </View>
-                  <Text style={styles.selectIcon}>→</Text>
-                </TouchableOpacity>
+                </View>
               ))}
             </ScrollView>
           </View>
@@ -217,6 +307,7 @@ export default function CollectionViewer() {
         </TouchableOpacity>
       </View>
 
+      {/* Rest of existing UI... */}
       {objects.length > 0 && (
         <View style={styles.resultsSection}>
           <View style={styles.resultsHeader}>
@@ -228,7 +319,7 @@ export default function CollectionViewer() {
                 Last updated: {new Date().toLocaleTimeString()}
               </Text>
             </View>
-            
+
             <View style={styles.viewModeContainer}>
               <TouchableOpacity
                 style={[styles.viewModeButton, viewMode === 'table' && styles.viewModeButtonActive]}
@@ -293,6 +384,14 @@ export default function CollectionViewer() {
           <Text style={styles.loadingText}>Loading collection data...</Text>
         </View>
       )}
+
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onClose={closeAlert}
+      />
     </View>
   );
 }
@@ -454,6 +553,18 @@ const styles = StyleSheet.create({
     color: '#6c757d',
     fontWeight: '500',
     textTransform: 'uppercase',
+  },
+  collectionActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  deleteButton: {
+    marginRight: 12,
+    padding: 4,
+  },
+  deleteButtonText: {
+    fontSize: 16,
+    color: '#dc3545',
   },
   selectIcon: {
     fontSize: 16,

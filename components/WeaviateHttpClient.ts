@@ -106,13 +106,13 @@ export class WeaviateHttpService {
       }
 
       const result = await response.json();
-      
+
       if (result.errors) {
         throw new Error(`GraphQL Error: ${result.errors[0].message}`);
       }
 
       const objects = result.data?.Get?.[collectionName] || [];
-      
+
       return objects.map((obj: any) => ({
         id: obj._additional.id,
         class: collectionName,
@@ -150,6 +150,28 @@ export class WeaviateHttpService {
       return await response.json();
     } catch (error) {
       console.error('Failed to get collection schema:', error);
+      throw error;
+    }
+  }
+
+  async deleteCollection(collectionName: string): Promise<boolean> {
+    if (!this.isConnected) {
+      throw new Error('Not connected to Weaviate');
+    }
+
+    try {
+      const response = await fetch(`${this.baseUrl}/schema/${collectionName}`, {
+        method: 'DELETE',
+        headers: this.headers,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Failed to delete collection:', error);
       throw error;
     }
   }
