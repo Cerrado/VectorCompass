@@ -11,6 +11,7 @@ interface ObjectTableProps {
 // Styled Components
 const Container = styled.View`
   flex: 1;
+  min-height: 300px;
 `;
 
 const EmptyContainer = styled.View`
@@ -42,16 +43,13 @@ const TableSubtitle = styled.Text`
   color: ${theme.colors.text.secondary};
 `;
 
-const HorizontalScroll = styled.ScrollView`
-  flex: 1;
-`;
-
 const Table = styled.View`
-  min-width: 100%;
+  width: 100%;
 `;
 
 const TableBody = styled.ScrollView`
   flex: 1;
+  min-height: 200px;
   max-height: 400px;
 `;
 
@@ -67,7 +65,9 @@ const Row = styled.View<{ isHeader?: boolean; isEven?: boolean }>`
 `;
 
 const Cell = styled.View<{ isHeader?: boolean }>`
-  width: 140px;
+  flex: 1;
+  min-width: 80px;
+  min-height: 40px;
   padding: ${theme.spacing.md}px;
   border-right-width: 1px;
   border-right-color: ${({ isHeader }) => isHeader ? '#495057' : '#dee2e6'};
@@ -87,6 +87,7 @@ const ObjectRow = styled.TouchableOpacity<{ isEven?: boolean }>`
   flex-direction: row;
   border-bottom-width: 1px;
   border-bottom-color: #f0f0f0;
+  min-height: 56px;
   background-color: ${({ isEven }) => isEven ? theme.colors.background : '#fafafa'};
 `;
 
@@ -154,20 +155,16 @@ export default function ObjectTable({ objects, onObjectPress }: ObjectTableProps
       <TableHeader>
         <TableTitle>Data Table</TableTitle>
         <TableSubtitle>
-          Showing {objects.length} object{objects.length !== 1 ? 's' : ''} • Scroll horizontally to view all columns
+          Showing {objects.length} object{objects.length !== 1 ? 's' : ''} • All columns displayed
         </TableSubtitle>
       </TableHeader>
-      
-      <HorizontalScroll horizontal showsHorizontalScrollIndicator={true}>
-        <Table>
-          {renderHeaderRow()}
-          <TableBody nestedScrollEnabled={true}>
-            {objects.map((object, index) => renderObjectRow(object, index))}
-          </TableBody>
-        </Table>
-      </HorizontalScroll>
+
+      <Table>
+        {renderHeaderRow()}
+        <TableBody nestedScrollEnabled={true}>
+          {objects.map((object, index) => renderObjectRow(object, index))}
+        </TableBody>
+      </Table>
     </Container>
   );
 }
-
-
