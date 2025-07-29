@@ -41,3 +41,7 @@ app-example
 .vscode/
 
 /.idea/
+
+# Flutter Parts
+/flutter_vector_compass/.dart_tool/
+/flutter_vector_compass/build/
